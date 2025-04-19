@@ -1,0 +1,40 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.venv/
+env/
+venv/
+
+# Editor & OS files
+.DS_Store
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# Python cache
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Keys or security artifacts (if not in version control)
+*.pem
+*.key
+
+# Logs or temp
+*.log
+*.tmp
+
+# Test output or coverage
+coverage/
+htmlcov/
+*.cover
+.cache/
+.pytest_cache/
+
+# Jupyter checkpoints (if you experiment later)
+.ipynb_checkpoints/
