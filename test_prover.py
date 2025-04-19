@@ -1,5 +1,7 @@
+import os
 import pytest
 from prover_core import Prover  # You can change this to match your file structure
+
 
 def test_keypair_generation():
     prover = Prover()
@@ -47,3 +49,10 @@ def test_signature_verifies_with_public_key():
         prover.padding_scheme(),
         prover.hash_algorithm()
     )
+
+def test_prover_key_persistence(tmp_path):
+    prover1 = Prover(key_dir=tmp_path)
+    prover2 = Prover(key_dir=tmp_path)
+    assert prover1.get_public_pem() == prover2.get_public_pem()
+
+

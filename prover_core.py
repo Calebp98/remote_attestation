@@ -4,9 +4,9 @@ from cryptography.exceptions import InvalidSignature
 import os
 
 class Prover():
-    def __init__(self):
-        priv_path = "priv.pem"
-        pub_path = "pub.pem"
+    def __init__(self, key_dir="keys"):
+        priv_path = os.path.join(key_dir, "priv.pem")
+        pub_path = os.path.join(key_dir, "pub.pem")
 
         if os.path.exists(priv_path):
             # Load private key from PEM
