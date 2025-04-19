@@ -1,17 +1,25 @@
-# verifier.py
 import os
 import base64
-from flask import Flask, request, jsonify
+from flask import Flask, render_template, request, jsonify
 
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.exceptions import InvalidSignature
-import base64
 
 app = Flask(__name__)
 
 CURRENT_NONCE = None
+EXPECTED_STATE = "bootloader=v1 kernel=v5 app=trusted"
 
+@app.route("/")
+def index():
+    return render_template("index.html", status=None)
+
+@app.route("/configure", methods=["POST"])
+def configure():
+    global EXPECTED_STATE
+    EXPECTED_STATE = request.form["state"].strip()
+    return render_template("index.html", status="Configured: " + EXPECTED_STATE)
 
 @app.route("/attest", methods=["POST"])
 def attest():
@@ -47,9 +55,8 @@ def attest():
         actual_pcr = quote[len(expected_nonce):]
 
         # Simulate expected PCR for known-good state
-        expected_state = "bootloader=v1 kernel=v5 app=trusted"
         digest = hashes.Hash(hashes.SHA256())
-        digest.update(expected_state.encode())
+        digest.update(EXPECTED_STATE.encode())
         expected_pcr = digest.finalize()
 
         # Compare
@@ -61,14 +68,18 @@ def attest():
     except (InvalidSignature, KeyError, ValueError) as e:
         return jsonify({"status": "invalid", "error": str(e)}), 400
 
-
-
-
 @app.route("/nonce", methods=["POST"])
 def nonce():
     global CURRENT_NONCE
     CURRENT_NONCE = os.urandom(16)
     return jsonify({"nonce": base64.b64encode(CURRENT_NONCE).decode("utf-8")})
+
+@app.route("/current_nonce", methods=["GET"])
+def current_nonce():
+    if CURRENT_NONCE is None:
+        return jsonify({"error": "No nonce has been generated yet."}), 404
+    return jsonify({"nonce": base64.b64encode(CURRENT_NONCE).decode("utf-8")})
+
 
 if __name__ == "__main__":
     app.run(port=8000)
