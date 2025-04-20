@@ -1,0 +1,23 @@
+version: "3.9"
+services:
+  verifier:
+    build:
+      context: ./verifier
+    container_name: verifier
+    ports:
+      - "8000:8000"
+    networks:
+      - attestation-net
+
+  prover:
+    build:
+      context: ./prover
+    container_name: prover
+    depends_on:
+      - verifier
+    networks:
+      - attestation-net
+
+networks:
+  attestation-net:
+    driver: bridge

@@ -1,97 +1,68 @@
+Absolutely — here’s a **concise, modern `README.md`** for your containerized remote attestation system:
 
+---
 
 ```markdown
-# 🔐 Remote Attestation Demo
+# 🔐 Remote Attestation Demo (Dockerized)
 
-A hands-on, educational demo of TPM-style remote attestation, built with Python and Flask.
+Simulates TPM-style attestation between a prover and verifier using Docker containers.
 
-This project simulates how a **prover** (e.g., a client or device) can prove its system state to a **verifier**, using cryptographic signatures, nonce-based freshness, and hashed configuration values (PCRs).
-
-It includes two browser-based user interfaces:
-- 🛡️ Verifier UI (to issue and check attestations)
-- 🧪 Prover UI (to generate quotes and provide identity)
-
----
-
-## 🧠 What This Demonstrates
-
-- TPM-style attestation using RSA keys
-- Hash-based PCR state verification
-- Signature verification using `cryptography`
-- Nonce-based replay protection
-- Two-sided web interaction (verifier + prover)
-
----
-
-## 🧪 How It Works
-
-1. **Verifier**:
-   - Generates a nonce (challenge)
-   - Defines an expected system state
-   - Verifies attestation responses (quote, signature, public key)
-
-2. **Prover**:
-   - Fetches the current nonce from the verifier
-   - Hashes its system state
-   - Signs `nonce + pcr` with its private key
-   - Displays everything for copy-paste into the verifier UI
+- 🛡️ **Verifier**: Flask app with a web UI to define trusted file state and verify attestations
+- 🧪 **Prover**: Measures local files, signs a quote, and submits it to the verifier
 
 ---
 
 ## 🚀 Quickstart
 
-### 1. Install dependencies
-
+### 1. Build and run both services
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install flask cryptography requests
+docker-compose up --build
 ```
 
-### 2. Start the verifier (port 8000)
-
-```bash
-python verifier.py
-```
-
-Visit: [http://localhost:8000](http://localhost:8000)
-
+### 2. In your browser:
+- Visit: [http://localhost:8000](http://localhost:8000)
+- Upload `start.sh` and `config.json`
 - Click **Request Nonce**
-- Set the expected system state
 
-### 3. Start the prover UI (port 5000)
+### 3. Re-run the prover
+```bash
+docker-compose up --build prover
+```
+
+✅ You should see `status: ok` in the logs and/or UI.
+
+---
+
+## 🗂 Project Structure
+
+```
+verifier/      # Flask app, UI, and expected file logic
+prover/        # Prover script + files to be measured
+docker-compose.yml
+```
+
+---
+
+## 🧠 What This Simulates
+
+- TPM-style PCR extension (hash chaining of files)
+- Remote attestation with signed quotes
+- Replay prevention via nonces
+- Manual attestation policy control (via file uploads)
+
+---
+
+## 📎 Notes
+
+- Containers communicate via Docker network (`attestation-net`)
+- Files are remeasured on each run
+- No persistent volume: prover key and PCR reset every time
+
+---
+
+## 🧹 Cleanup
 
 ```bash
-python prover_ui.py
+docker-compose down
 ```
-
-Visit: [http://localhost:5000](http://localhost:5000)
-
-- View the generated quote, signature, and public key
-- Copy them into the verifier UI
-
----
-
-## 📁 Project Structure
-
-```
-verifier.py       # Flask server with web UI and attestation logic
-prover_ui.py      # Flask server with UI to generate and show quote
-prover_core.py    # Handles key generation, PCR hashing, and quote signing
-templates/
-  ├── index.html    # Verifier UI
-  └── prover.html   # Prover UI
-keys/             # Stores persistent prover keypair (priv.pem, pub.pem)
-```
-
----
-
-## ✨ Features
-
-- Persistent keypair (saved in `keys/`)
-- Manual quote inspection
-- Web-based flow for learning and demoing
-- Built using only Flask, requests, and Python cryptography
-
----
 ```

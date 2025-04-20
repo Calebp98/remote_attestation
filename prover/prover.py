@@ -2,8 +2,9 @@ import requests
 import base64
 from prover_core import Prover
 
-STATE = "bootloader=v1 kernel=v5 app=trusted"
-SERVER = "http://localhost:8000"
+FILES = ["app_files/start.sh", "app_files/config.json"]
+SERVER = "http://verifier:8000"
+
 
 prover = Prover(key_dir="keys")
 
@@ -13,7 +14,7 @@ nonce_res.raise_for_status()
 nonce = base64.b64decode(nonce_res.json()["nonce"])
 
 # Step 2: Generate quote and signature
-quote, signature = prover.generate_quote(nonce, STATE)
+quote, signature = prover.generate_quote(nonce, FILES)
 
 # Step 3: Prepare attestation payload
 payload = {

@@ -1,6 +1,6 @@
 import os
 import pytest
-from prover_core import Prover  # You can change this to match your file structure
+from prover.prover_core import Prover  # You can change this to match your file structure
 
 
 def test_keypair_generation():

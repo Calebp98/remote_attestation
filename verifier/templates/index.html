@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Verifier UI</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-4">
+  <div class="container">
+    <h1 class="mb-4">🛡️ Remote Attestation Verifier</h1>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class="alert alert-success">{{ messages[0] }}</div>
+    {% endif %}
+    {% endwith %}
+
+    {% if uploaded_files %}
+    <div class="alert alert-secondary">
+        <strong>Files measured (in order):</strong>
+        <ol>
+        {% for fname in uploaded_files %}
+            <li>{{ fname }}</li>
+        {% endfor %}
+        </ol>
+    </div>
+    {% endif %}
+
+  
+
+    <h4>📁 Upload Files to Set Expected PCR</h4>
+    <form action="/set_expected_files" method="post" enctype="multipart/form-data" class="mb-4">
+      <input type="file" name="expected_files" multiple required class="form-control mb-2">
+      <button class="btn btn-primary">Upload & Set Expected PCR</button>
+    </form>
+
+    <h4>🔄 Generate Nonce</h4>
+    <button class="btn btn-secondary mb-2" onclick="requestNonce()">Request Nonce</button>
+    <div><strong>Current Nonce:</strong> <span id="nonce-display">(not set)</span></div>
+    
+
+    <h4>🧪 Manual Attestation</h4>
+    <form onsubmit="submitAttestation(event)">
+      <textarea id="quote" class="form-control mb-2" rows="2" placeholder="Paste base64-encoded quote" required></textarea>
+      <textarea id="signature" class="form-control mb-2" rows="2" placeholder="Paste base64-encoded signature" required></textarea>
+      <textarea id="public_key" class="form-control mb-2" rows="6" placeholder="Paste PEM-formatted public key" required></textarea>
+      <button class="btn btn-success">Send Attestation</button>
+    </form>
+
+    <div class="mt-4">
+      <h5>Status:</h5>
+      <pre id="attestation-status" class="bg-light p-2">(waiting)</pre>
+    </div>
+  </div>
+
+  <script>
+    async function submitAttestation(event) {
+      event.preventDefault();
+      const quote = document.getElementById("quote").value;
+      const signature = document.getElementById("signature").value;
+      const publicKey = document.getElementById("public_key").value;
+
+      const res = await fetch("/attest", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ quote, signature, public_key: publicKey })
+      });
+
+      const data = await res.json();
+      document.getElementById("attestation-status").textContent = data.status || data.error;
+    }
+
+
+
+    async function requestNonce() {
+        const res = await fetch("/nonce", { method: "POST" });
+        const data = await res.json();
+        document.getElementById("nonce-display").textContent = data.nonce;
+    }
+
+
+  </script>
+</body>
+</html>

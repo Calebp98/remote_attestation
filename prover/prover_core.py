@@ -5,6 +5,8 @@ import os
 
 class Prover():
     def __init__(self, key_dir="keys"):
+        os.makedirs(key_dir, exist_ok=True)
+
         priv_path = os.path.join(key_dir, "priv.pem")
         pub_path = os.path.join(key_dir, "pub.pem")
 
@@ -48,14 +50,28 @@ class Prover():
         pcr_value = pcr_digest.finalize()
         return pcr_value
     
+    def compute_files_pcr(self, files):
+        v = b"\x00" * 32
+
+
+        for path in files:
+            with open(path, "rb") as f:
+                content = f.read()
+                h = hashes.Hash(hashes.SHA256())
+                h.update(v + content)
+                v = h.finalize()
+        return v
+        
+    
     def padding_scheme(self):
         return padding.PSS(mgf=padding.MGF1(hashes.SHA256()), salt_length=padding.PSS.MAX_LENGTH)
     
     def hash_algorithm(self):
         return hashes.SHA256()
     
-    def generate_quote(self, nonce: bytes, state: str):
-        quote = nonce + self.compute_pcr(state)
+    def generate_quote(self, nonce: bytes, files: list):
+        pcr = self.compute_files_pcr(files)
+        quote = nonce + pcr
         signature = self.private_key.sign(
             quote,
             self.padding_scheme(),

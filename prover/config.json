@@ -1,0 +1,7 @@
+{
+    "app_name": "demo-attestor",
+    "version": "1.0.0",
+    "mode": "secure",
+    "features": ["attestation", "logging"]
+  }
+  
