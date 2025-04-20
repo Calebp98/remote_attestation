@@ -1,4 +1,3 @@
-```markdown
 # 🔐 Remote Attestation Demo (Dockerized)
 
 Simulates TPM-style attestation between a prover and verifier using Docker containers.
@@ -60,5 +59,4 @@ docker-compose.yml
 
 ```bash
 docker-compose down
-```
 ```
