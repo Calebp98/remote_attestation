@@ -1,7 +1,3 @@
-Absolutely — here’s a **concise, modern `README.md`** for your containerized remote attestation system:
-
----
-
 ```markdown
 # 🔐 Remote Attestation Demo (Dockerized)
 
