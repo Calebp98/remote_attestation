@@ -1,13 +1,13 @@
-# 🔐 Remote Attestation Demo (Dockerized)
+#Remote Attestation Demo (Dockerized)
 
 Simulates TPM-style attestation between a prover and verifier using Docker containers.
 
-- 🛡️ **Verifier**: Flask app with a web UI to define trusted file state and verify attestations
-- 🧪 **Prover**: Measures local files, signs a quote, and submits it to the verifier
+- **Verifier**: Flask app with a web UI to define trusted file state and verify attestations
+- **Prover**: Measures local files, signs a quote, and submits it to the verifier
 
 ---
 
-## 🚀 Quickstart
+## Quickstart
 
 ### 1. Build and run both services
 ```bash
@@ -24,11 +24,11 @@ docker-compose up --build
 docker-compose up --build prover
 ```
 
-✅ You should see `status: ok` in the logs and/or UI.
+You should see `status: ok` in the logs and/or UI.
 
 ---
 
-## 🗂 Project Structure
+## Project Structure
 
 ```
 verifier/      # Flask app, UI, and expected file logic
@@ -38,7 +38,7 @@ docker-compose.yml
 
 ---
 
-## 🧠 What This Simulates
+## What This Simulates
 
 - TPM-style PCR extension (hash chaining of files)
 - Remote attestation with signed quotes
@@ -47,7 +47,7 @@ docker-compose.yml
 
 ---
 
-## 📎 Notes
+## Notes
 
 - Containers communicate via Docker network (`attestation-net`)
 - Files are remeasured on each run
@@ -55,7 +55,7 @@ docker-compose.yml
 
 ---
 
-## 🧹 Cleanup
+## Cleanup
 
 ```bash
 docker-compose down
